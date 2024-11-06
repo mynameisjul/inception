@@ -14,11 +14,15 @@ RUN apt-get update -y && apt-get install -y \
 WORKDIR /var/www/html
 
 RUN curl -o wordpress.tar.gz https://wordpress.org/latest.tar.gz && \
-	tar -xzf wordpress.tar.gz --strip-components=1 & \
+	tar -xzf wordpress.tar.gz --strip-components=1 && \
 	rm wordpress.tar.gz
 
 RUN chown -R www-data:www-data /var/www/html
 
-EXPOSE 9000
+COPY ./tools/wp_init.sh /var/www/html/tools/wp_init.sh
+RUN chmod +x /var/www/html/tools/wp_init.sh
 
-CMD ["php-fpm", "--nodaemonize"]
+# EXPOSE 9000
+
+VOLUME [ "/var/www/html" ]
+CMD ["sh", "/var/www/html/tools/wp_init.sh"]

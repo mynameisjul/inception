@@ -1,4 +1,18 @@
 services:
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/MariaDB
+    volumes:
+      - mariadb:/var/lib/mysql
+    env_file:
+      - .env
+    networks:
+      - inception
+    # expose:
+    #   - "3306"
+    restart: unless-stopped
+    init: true
+  
   nginx:
     container_name: nginx
     build: ./requirements/NGINX
@@ -11,22 +25,8 @@ services:
     env_file:
       - .env
     depends_on:
+      - mariadb
       - wordpress
-    restart: unless-stopped
-    init: true
-    stop_grace_period: 5s
-
-  mariadb:
-    container_name: mariadb
-    build: ./requirements/MariaDB
-    volumes:
-      - mariadb:/var/lib/mysql
-    env_file:
-      - .env
-    networks:
-      - inception
-    expose:
-      - "3306"
     restart: unless-stopped
     init: true
     stop_grace_period: 5s
@@ -40,8 +40,8 @@ services:
       - .env
     networks:
       - inception
-    expose:
-      - "9000"
+    # expose:
+    #   - "9000"
     depends_on:
       - mariadb
     restart: unless-stopped
