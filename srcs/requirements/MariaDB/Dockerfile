@@ -13,5 +13,6 @@ COPY tools/mysql_init.sh /usr/local/bin/mysql_init.sh
 
 RUN chmod +x /usr/local/bin/mysql_init.sh
 
+ENTRYPOINT [ "mysql_init.sh" ]
 # Setting default start command
 CMD ["mariadb"]

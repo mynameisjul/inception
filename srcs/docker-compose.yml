@@ -1,7 +1,7 @@
 services:
   nginx:
     container_name: nginx
-    build: .
+    build: ./requirements/NGINX
     networks:
       - inception
     ports:
@@ -12,16 +12,15 @@ services:
       - .env
     depends_on:
       - wordpress
-    restart:
-      - unless-stopped
+    restart: unless-stopped
     init: true
     stop_grace_period: 5s
 
   mariadb:
     container_name: mariadb
-    build: .
+    build: ./requirements/MariaDB
     volumes:
-      - mariadb-data:/var/lib/mysql
+      - mariadb:/var/lib/mysql
     env_file:
       - .env
     networks:
@@ -34,9 +33,9 @@ services:
   
   wordpress:
     container_name: wordpress
-    build: .
+    build: ./requirements/WordPress
     volumes:
-      - wordpress-data:/var/www/html
+      - wordpress:/var/www/html
     env_file:
       - .env
     networks:

@@ -8,8 +8,8 @@ RUN apt-get update -y && apt-get install -y \
 	php-curl \
 	curl \
 	unzip \
-	mariadb-client
-	& apt-get clean
+	mariadb-client \
+	&& apt-get clean
 
 WORKDIR /var/www/html
 
