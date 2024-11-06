@@ -1,25 +1,71 @@
 services:
-  NGINX:
-    image: node:18-alpine
-    command: sh -c "yarn install && yarn run dev"
+  nginx:
+    container_name: nginx
+    build: .
+    networks:
+      - inception
     ports:
-      - 127.0.0.1:3000:3000
-    working_dir: /app
+      - "443:443"
     volumes:
-      - ./:/app
-    environment:
-      MYSQL_HOST: mysql
-      MYSQL_USER: root
-      MYSQL_PASSWORD: secret
-      MYSQL_DB: todos
+      - wordpress:/var/www/html
+    env_file:
+      - .env
+    depends_on:
+      - wordpress
+    restart:
+      - unless-stopped
+    init: true
+    stop_grace_period: 5s
 
-  mysql:
-    image: mysql:8.0
+  mariadb:
+    container_name: mariadb
+    build: .
     volumes:
-      - todo-mysql-data:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: secret
-      MYSQL_DATABASE: todos
+      - mariadb-data:/var/lib/mysql
+    env_file:
+      - .env
+    networks:
+      - inception
+    expose:
+      - "3306"
+    restart: unless-stopped
+    init: true
+    stop_grace_period: 5s
+  
+  wordpress:
+    container_name: wordpress
+    build: .
+    volumes:
+      - wordpress-data:/var/www/html
+    env_file:
+      - .env
+    networks:
+      - inception
+    expose:
+      - "9000"
+    depends_on:
+      - mariadb
+    restart: unless-stopped
+    init: true
+    stop_grace_period: 5s
+
+networks:
+  inception:
+    name: inception
+    driver: bridge
 
 volumes:
-  todo-mysql-data:
+  wordpress:
+    name: wordpress-data
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/jblaye/data/wordpress'
+  mariadb:
+    name: mariadb-data
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/home/jblaye/data/mariadb'
