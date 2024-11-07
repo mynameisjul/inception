@@ -8,11 +8,11 @@ RUN apt update && apt upgrade -y && \
 # Exposing default port
 # EXPOSE 3306
 
-COPY conf/50-server.conf /etc/mysql/mariadb.conf.d/
-COPY tools/mysql_init.sh /usr/local/bin/mysql_init.sh
+COPY ./conf/50-server.conf /etc/mysql/mariadb.conf.d/
+COPY ./tools/mysql_init.sh .
 
-RUN chmod +x /usr/local/bin/mysql_init.sh
+RUN chmod +x mysql_init.sh
 
-ENTRYPOINT [ "sh", "/usr/local/bin/mysql_init.sh" ]
+ENTRYPOINT [ "sh", "./mysql_init.sh" ]
 # Setting default start command
 CMD ["mariadb"]
